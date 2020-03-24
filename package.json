@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
+    "dateformat": "^3.0.3",
+    "diff": "^4.0.2",
     "request": "^2.88.2",
     "rss-parser": "^3.7.6"
   }
