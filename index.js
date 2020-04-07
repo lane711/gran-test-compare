@@ -73,7 +73,7 @@ const printAndWriteGoogleIndex = async () => {
 
 setInterval(function() {
   printAndWriteGoogleIndex();
-}, CHECK_FEED_INTERVAL); //1 minutes
+}, checkFeeInterval); //1 minutes
 
 function generateFileName() {
   var now = new Date();
