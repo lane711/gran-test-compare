@@ -4,17 +4,21 @@ require('dotenv').config()
 const port = process.env.PORT || 3000;
 const checkFeeInterval = process.env.CHECK_FEED_INTERVAL || 1 * 10 * 1000;
 
-app.get("/", function(req, res) {
-  let today = new Date();
-  res.send(today + ' --> Mode:' + process.env.MODE);
+// app.get("/", function(req, res) {
+//   let today = new Date();
+//   res.send(today + ' --> Mode:' + process.env.MODE);
 
-  setInterval(function() {
-    printAndWriteGoogleIndex();
-  }, checkFeeInterval); //1 minutes
+//   setInterval(function() {
+//     printAndWriteGoogleIndex();
+//   }, checkFeeInterval); //1 minutes
 
-});
+// });
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+// app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+
+setInterval(function() {
+  printAndWriteGoogleIndex();
+}, checkFeeInterval); //1 minutes
 
 //==============================
 
@@ -46,6 +50,7 @@ const getContent = () => {
       if(error){
         console.log(error);
       }
+      console.log('status:' + response.statusCode );
       if (!error && response.statusCode == 200) {
         // console.log(html);
         resolve(html);
