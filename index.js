@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+require('dotenv').config()
+const port = process.env.PORT || 3000;
 
 
 app.get("/", function(req, res) {
@@ -22,8 +23,8 @@ const fs = require("fs");
 const writeFile = promisify(fs.writeFile);
 const request = require("request");
 require("colors");
-const url = "http://10.211.55.3/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=2038&max=20&isgovdelivery=1";
-// const url = "https://defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=945&max=20&isgovdelivery=1";
+const url = process.env.MODE === "dev" ? "http://10.211.55.3/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=2038&max=20&isgovdelivery=1" 
+                                        : "https://defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=945&max=20&isgovdelivery=1";
 var dateFormat = require("dateformat");
 var jsdiff = require("diff");
 var lastFile = "";
@@ -32,6 +33,8 @@ var lastFileContent = "";
 
 
 const getContent = () => {
+
+  console.log('downloading from: ' = url);
 
   const options = {
     url: url,
