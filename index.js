@@ -1,18 +1,53 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
+
+app.get("/", function(req, res) {
+  let today = new Date();
+  res.send(today + ' --> Mode:' + process.env.MODE);
+
+  setInterval(function() {
+    printAndWriteGoogleIndex();
+  }, 1 * 5 * 1000); //1 minutes
+
+});
+
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+
+//==============================
+
 const { promisify } = require("util");
 const fs = require("fs");
 const writeFile = promisify(fs.writeFile);
 const request = require("request");
 require("colors");
-// const url = "http://10.211.55.3/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=2038&max=20&isgovdelivery=1";
-const url = "https://defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=945&max=20&isgovdelivery=1";
+const url = "http://10.211.55.3/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=2038&max=20&isgovdelivery=1";
+// const url = "https://defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=400&Site=945&max=20&isgovdelivery=1";
 var dateFormat = require("dateformat");
 var jsdiff = require("diff");
 var lastFile = "";
 var lastFileContent = "";
 
+
+
 const getContent = () => {
+
+  const options = {
+    url: url,
+    rejectUnauthorized: false
+  };
+
   return new Promise((resolve, reject) => {
-    request(url, (err, res, body) => (err ? reject(err) : resolve(body)));
+    request(options, function(error, response, html) {
+      if(error){
+        console.log(error);
+      }
+      if (!error && response.statusCode == 200) {
+        // console.log(html);
+        resolve(html);
+      }
+    });
   });
 };
 
@@ -33,13 +68,13 @@ const printAndWriteGoogleIndex = async () => {
   }
 };
 
-time = setInterval(function() {
+setInterval(function() {
   printAndWriteGoogleIndex();
 }, 1 * 60 * 1000); //1 minutes
 
 function generateFileName() {
   var now = new Date();
-  let nowFormatted = dateFormat(now, "yyyy-MM-dd--h:MM:ss-TT");
+  let nowFormatted = dateFormat(now, "yyyy-mm-dd--h:MM:ss-TT");
   // console.log(nowFormatted);
   return nowFormatted + ".txt";
 }
