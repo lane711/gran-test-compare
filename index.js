@@ -34,7 +34,7 @@ var lastFileContent = "";
 
 const getContent = () => {
 
-  console.log('downloading from: ' = url);
+  console.log('downloading from: ' + url);
 
   const options = {
     url: url,
