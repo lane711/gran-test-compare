@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config()
 const port = process.env.PORT || 3000;
-
+const checkFeeInterval = process.env.CHECK_FEED_INTERVAL || 1 * 10 * 1000;
 
 app.get("/", function(req, res) {
   let today = new Date();
@@ -10,7 +10,7 @@ app.get("/", function(req, res) {
 
   setInterval(function() {
     printAndWriteGoogleIndex();
-  }, 5 * 60 * 1000); //1 minutes
+  }, checkFeeInterval); //1 minutes
 
 });
 
@@ -57,7 +57,7 @@ const getContent = () => {
 const printAndWriteGoogleIndex = async () => {
   try {
     let fileContent = await getContent();
-    // console.log(googleIndexHTML);
+    console.log('file length:' + fileContent.length);
 
     let fileName = generateFileName();
     let filePath = `${__dirname}/files/${fileName}`;
