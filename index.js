@@ -10,7 +10,7 @@ app.get("/", function(req, res) {
 
   setInterval(function() {
     printAndWriteGoogleIndex();
-  }, 1 * 5 * 1000); //1 minutes
+  }, 5 * 60 * 1000); //1 minutes
 
 });
 
