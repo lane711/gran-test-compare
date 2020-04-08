@@ -1,8 +1,14 @@
 const express = require('express');
 const app = express();
 require('dotenv').config()
+const cheerio = require('cheerio')
+const axios = require('axios')
+let Parser = require('rss-parser');
+let parser = new Parser();
+
 const port = process.env.PORT || 3000;
 const checkFeeInterval = process.env.CHECK_FEED_INTERVAL || 1 * 10 * 1000;
+const doWriteFile = false;
 
 // app.get("/", function(req, res) {
 //   let today = new Date();
@@ -16,7 +22,7 @@ const checkFeeInterval = process.env.CHECK_FEED_INTERVAL || 1 * 10 * 1000;
 
 // app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
 
-setInterval(function() {
+setInterval(async function() {
   printAndWriteGoogleIndex();
 }, checkFeeInterval); //1 minutes
 
@@ -36,37 +42,63 @@ var lastFileContent = "";
 
 
 
-const getContent = () => {
+const getContent = async() => {
+  let content = "";
+  let feed = await parser.parseURL(url);
+  console.log(feed.title);
 
-  console.log('downloading from: ' + url);
+  feed.items.forEach(item => {
+    content += item.content;
+});
 
-  const options = {
-    url: url,
-    rejectUnauthorized: false
-  };
-
-  return new Promise((resolve, reject) => {
-    request(options, function(error, response, html) {
-      if(error){
-        console.log(error);
-      }
-      console.log('status:' + response.statusCode );
-      if (!error && response.statusCode == 200) {
-        // console.log(html);
-        resolve(html);
-      }
-    });
-  });
+  return content;
 };
+
+
+// const getContent = () => {
+
+//   // console.log('downloading from: ' + url);
+
+//   const options = {
+//     url: url,
+//     rejectUnauthorized: false
+//   };
+
+//   return new Promise((resolve, reject) => {
+//     request(options, function(error, response, html) {
+//       if(error){
+//         console.log(error);
+//       }
+//       console.log('status:' + response.statusCode );
+//       if (!error && response.statusCode == 200) {
+//         console.log(html);
+//         resolve(html);
+//       }
+//     });
+//   });
+// };
+
+// const fetchHTML = async(url) => {
+//   const { data } = await axios.get(url)
+//   return cheerio.load(data)
+// };
 
 const printAndWriteGoogleIndex = async () => {
   try {
+    // const { data } = await axios.get(url)
+
+    // let fileContent2 = await this.fetchHTML(url);
+
     let fileContent = await getContent();
+
     console.log('file length:' + fileContent.length);
 
     let fileName = generateFileName();
     let filePath = `${__dirname}/files/${fileName}`;
-    await writeFile(filePath, fileContent, "utf8");
+
+    if(doWriteFile){
+      await writeFile(filePath, fileContent, "utf8");
+    }
     // console.log(`${fileName} written`);
     compareFeeds(fileName, fileContent, lastFile, lastFileContent);
     lastFile = fileName;
@@ -75,10 +107,6 @@ const printAndWriteGoogleIndex = async () => {
     console.log(err);
   }
 };
-
-setInterval(function() {
-  printAndWriteGoogleIndex();
-}, checkFeeInterval); //1 minutes
 
 function generateFileName() {
   var now = new Date();
