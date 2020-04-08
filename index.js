@@ -45,7 +45,7 @@ var lastFileContent = "";
 const getContent = async() => {
   let content = "";
   let feed = await parser.parseURL(url);
-  console.log(feed.title);
+  // console.log(feed.title);
 
   feed.items.forEach(item => {
     content += item.content;
